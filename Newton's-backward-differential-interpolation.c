@@ -1,20 +1,25 @@
 /* Newton's backward differential interpolation */
-#include<stdio.h>
-
+#include <stdio.h>
+#include <math.h>
+#define N 5
 int main(void){
     int i,j;
-    float x[3],f[3][3],X,h,r,F,p;
-    for(i=0;i<3;i++) {
-        printf("input x%d,f%d : ",i,i);
-        scanf("%f %f",&x[i],&f[0][i]);
-        for(j=1;j<3;j++) f[j][i]=0.0;
+    float x[N],f[N][N],X,r,p,k;
+    for(i=0;i<N;i++) {
+        x[i]=2.0+0.1*i;
+        f[0][i]=sqrt(x[i]);
     }
-    for(j=1;j<3;j++)
-        for(i=0;i<3-j;i++) f[j][i]=f[j-1][i+1]-f[j-1][i];
-    printf("input X : ");
+    for(i=1;i<N;i++)
+        for(j=N-1;j>=i;j--)
+            f[i][j]=f[i-1][j]-f[i-1][j-1];
+    printf("input X:");
     scanf("%f",&X);
-    h=x[1]-x[0];
-    r=(X-x[0])/h;
-    F=f[0][0]+r*f[1][0]+r*(r-1)*f[2][0]/2.0;
-    printf("補間値 f(%f)=%f\n",X,F);
+    r=(X-x[N-1])/(x[1]-x[0]);
+    p=f[0][N-1];
+    k=1.0;
+    for(i=1;i<N;i++) {
+        k*=(r+i-1)/i;
+        p+=k*f[i][N-1];
+        printf("p%1d=%f(%f)\n",i,p,sqrt(X)-p);
+    }
 }
